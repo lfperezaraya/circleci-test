@@ -2,7 +2,7 @@ version: 2
 
 _references:
   workspace_root: &workspace_root
-    /temp/workspace
+    /tmp/workspace
   attach_workspace: &attach_workspace
     attach_workspace:
       at: *workspace_root
@@ -66,7 +66,7 @@ jobs:
           name: Restore app build from workspace
           command: |
             set -exu
-            mv /temp/workspace/dist/circleci-test dist/circleci-test
+            mv /tmp/workspace/dist/circleci-test dist/circleci-test
 
       - run:
           name: Deploy to Firebase
