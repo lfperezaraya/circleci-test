@@ -10,15 +10,15 @@ _references:
 _reusable_commands:
   restore_npm_cache: &restore_npm_cache
     keys:
-      - npm-v1-{{ checksum "yarn.lock" }}
+      - npm-v1-{{ checksum "package.json" }}
   install_npm_deps: &install_npm_deps
     name: Install dependencies
     command: |
-      if [ ! -d node_modules]; then
+      if [ ! -d node_modules ]; then
         yarn install
       fi
   save_npm_cache: &save_npm_cache
-    key: npm-v1-{{ checksum "yarn.lock" }}
+    key: npm-v1-{{ checksum "package.json" }}
     paths:
       - node_modules
 
