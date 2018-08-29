@@ -9,7 +9,7 @@ version: 2
     key: v1-dependencies-{{ checksum "yarn.lock" }}
     paths:
       - node_modules
- jobs:
+jobs:
   build:
     docker:
       - image: circleci/node:10.9
