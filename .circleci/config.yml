@@ -2,7 +2,7 @@ version: 2
 
 _references:
   workspace_root: &workspace_root
-    /tmp/workspace
+    /circleci-test
   attach_workspace: &attach_workspace
     attach_workspace:
       at: *workspace_root
@@ -31,6 +31,8 @@ jobs:
   build:
     <<: *node_defaults
     steps:
+      - *attach_workspace
+
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
       - save_cache: *save_npm_cache
@@ -43,8 +45,8 @@ jobs:
           name: copy app build to workspace
           command: |
             set -exu
-            mkdir -p /tmp/workspace/dist/circleci-test
-            cp -R dist/circleci-test /tmp/workspace/dist/circleci-test
+            mkdir -p /circleci-test/dist/circleci-test
+            cp -R dist/circleci-test /circleci-test/dist/circleci-test
 
       
       - persist_to_workspace:
@@ -54,6 +56,8 @@ jobs:
   deploy:
     <<: *node_defaults
     steps:
+      - *attach_workspace
+
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
       - save_cache: *save_npm_cache
@@ -62,7 +66,7 @@ jobs:
           name: Restore app build from workspace
           command: |
             set -exu
-            mv /tmp/workspace/dist/circleci-test dist/circleci-test
+            mv /circleci-test/dist/circleci-test dist/circleci-test
 
       - run:
           name: Deploy to Firebase
