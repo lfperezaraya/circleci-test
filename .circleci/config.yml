@@ -10,7 +10,7 @@ _references:
 _reusable_commands:
   restore_npm_cache: &restore_npm_cache
     keys:
-      - npm-v1-{{ arch }}-{{ checksum "package.json" }}
+      - npm-v1-{{ arch }}-{{ checksum "yarn.lock" }}
   install_npm_deps: &install_npm_deps
     name: Install dependencies
     command: |
@@ -18,7 +18,7 @@ _reusable_commands:
         yarn install
       fi
   save_npm_cache: &save_npm_cache
-    key: npm-v1-{{ arch }}-{{ checksum "package.json" }}
+    key: npm-v1-{{ arch }}-{{ checksum "yarn.lock" }}
     paths:
       - node_modules
 
@@ -48,14 +48,12 @@ jobs:
 
       
       - persist_to_workspace:
-          root: *workspace_root
+          root: /tmp/workspace
           paths:
             - dist/circleci-test
   deploy:
     <<: *node_defaults
     steps:
-      - *attach_workspace
-
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
       - save_cache: *save_npm_cache
