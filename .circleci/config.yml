@@ -1,0 +1,86 @@
+version: 2
+
+_references:
+  workspace_root: &workspace_root
+    /temp/workspace
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+_reusable_commands:
+  restore_npm_cache: &restore_npm_cache
+    keys:
+      - npm-v1-{{ checksum "yarn.lock" }}
+  install_npm_deps: &install_npm_deps
+    name: Install dependencies
+    command: |
+      if [ ! -d node_modules]; then
+        yarn install
+      fi
+  save_npm_cache: &save_npm_cache
+    key: npm-v1-{{ checksum "yarn.lock" }}
+    paths:
+      - node_modules
+
+environment_defaults:
+  node_defaults: &node_defaults
+    docker:
+      - image: circleci/node:10
+
+jobs:
+  build:
+    <<: *node_defaults
+    steps:
+      - *attach_workspace
+
+      - restore_cache: *restore_npm_cache
+      - run: *install_npm_deps
+      - save_cache: *save_npm_cache
+
+      - run:
+          name: Build app
+          command: yarn run build
+
+      - run:
+          name: copy app build to workspace
+          command: |
+            set -exu
+            mkdir -p /tmp/workspace/dist/circleci-test
+            cp -R dist/circleci-test /tmp/workspace/dist/circleci-test
+
+      
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - dist/circleci-test
+  deploy:
+    <<: *node_defaults
+    steps:
+      - *attach_workspace
+
+      - restore_cache: *restore_npm_cache
+      - run: *install_npm_deps
+      - save_cache: *save_npm_cache
+
+      - run:
+          name: Restore app build from workspace
+          command: |
+            set -exu
+            mv /temp/workspace/dist/circleci-test dist/circleci-test
+
+      - run:
+          name: Deploy to Firebase
+          command: yarn run deploy
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - deploy
+          filters:
+            branches:
+              only:
+                - master
