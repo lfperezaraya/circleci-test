@@ -31,8 +31,6 @@ jobs:
   build:
     <<: *node_defaults
     steps:
-      - *attach_workspace
-
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
       - save_cache: *save_npm_cache
