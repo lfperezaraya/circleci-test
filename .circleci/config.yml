@@ -10,7 +10,7 @@ _references:
 _reusable_commands:
   restore_npm_cache: &restore_npm_cache
     keys:
-      - npm-v1-{{ checksum "package.json" }}
+      - npm-v1-{{ arch }}-{{ checksum "package.json" }}
   install_npm_deps: &install_npm_deps
     name: Install dependencies
     command: |
@@ -18,7 +18,7 @@ _reusable_commands:
         yarn install
       fi
   save_npm_cache: &save_npm_cache
-    key: npm-v1-{{ checksum "package.json" }}
+    key: npm-v1-{{ arch }}-{{ checksum "package.json" }}
     paths:
       - node_modules
 
