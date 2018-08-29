@@ -32,7 +32,7 @@ jobs:
     <<: *node_defaults
     working_directory: ~/circleci-test
     steps:
-      - *attach_workspace
+      # - *attach_workspace
 
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
@@ -58,7 +58,7 @@ jobs:
     <<: *node_defaults
     working_directory: ~/circleci-test
     steps:
-      - *attach_workspace
+      # - *attach_workspace
 
       - restore_cache: *restore_npm_cache
       - run: *install_npm_deps
